@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- El fondo ya está definido en el tema, aquí solo el contenido -->
+
+    <!-- Ícono (como el de tu imagen) -->
+    <item
+        android:width="100dp"
+        android:height="100dp"
+        android:gravity="center">
+        <vector
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+            <!-- Representación simplificada del icono de tu imagen (portapapeles + lápiz) -->
+            <path
+                android:fillColor="@color/primary"
+                android:pathData="M30,20h40c5,0 8,3 8,8v50c0,5 -3,8 -8,8h-40c-5,0 -8,-3 -8,-8v-50c0,-5 3,-8 8,-8zM32,24c-2,0 -3,1 -3,3v50c0,2 1,3 3,3h40c2,0 3,-1 3,-3v-50c0,-2 -1,-3 -3,-3h-40z" />
+            <path
+                android:fillColor="@color/primary"
+                android:pathData="M40,40h28v4h-28z M40,50h20v4h-20z M60,65l10,10l-4,4l-10,-10z" />
+        </vector>
+    </item>
+
+    <!-- Texto "TaskEzz" debajo del icono -->
+    <!-- Nota: En Splash API no se puede poner texto directamente,
+         se suele incluir en el mismo drawable centrado -->
+</layer-list>
