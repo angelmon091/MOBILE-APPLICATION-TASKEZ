@@ -18,18 +18,12 @@
 
     <style name="Theme.ProyectoFinal" parent="Base.Theme.ProyectoFinal" />
 
-    <!-- Tema para la Pantalla de Carga (Splash Screen API) -->
+    <!-- Tema para la Pantalla de Carga (Splash Screen API) compatible con versiones < Android 12 -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <!-- El fondo de la splash screen -->
+        <!-- Sin el prefijo android: para compatibilidad hacia atrás -->
         <item name="windowSplashScreenBackground">@color/background</item>
-
-        <!-- CORRECCIÓN: El nombre del archivo es logoapp.png (minúsculas) -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/logoapp</item>
-
-        <!-- Duración de la animación (requerido por la API) -->
         <item name="windowSplashScreenAnimationDuration">1000</item>
-
-        <!-- El tema al que cambiará la Activity después de la carga -->
         <item name="postSplashScreenTheme">@style/Theme.ProyectoFinal</item>
     </style>
 </resources>

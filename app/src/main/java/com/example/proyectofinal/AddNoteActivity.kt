@@ -13,7 +13,6 @@ import java.util.Locale
 
 /**
  * Pantalla para añadir o editar una nota.
- * Sigue el diseño minimalista de la aplicación con soporte para insets de sistema.
  */
 class AddNoteActivity : AppCompatActivity() {
 
