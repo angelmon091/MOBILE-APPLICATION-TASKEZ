@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">ProyectoFinal</string>
+    <string name="app_name">TaskEzz</string>
+    <string name="menu_home">Inicio</string>
+    <string name="menu_reminders">Recordatorio</string>
+    <string name="menu_favorites">Favoritos</string>
+    <string name="menu_all">Todas</string>
+    <string name="menu_school">Escuela</string>
+    <string name="menu_project">Proyecto</string>
+    <string name="menu_work">Trabajo</string>
+    <string name="menu_settings">Ajustes</string>
+
+    <string name="toast_home_selected">Inicio seleccionado</string>
+    <string name="content_description_add">Agregar nuevo elemento</string>
 </resources>

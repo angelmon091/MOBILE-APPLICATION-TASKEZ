@@ -5,13 +5,14 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     tools:context=".MainActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:attr/windowBackground">
+        android:background="@color/background">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"
@@ -25,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:navigationIcon="@drawable/ic_menu"
+                app:navigationIconTint="@color/on_surface"
                 app:title="" />
 
             <HorizontalScrollView
@@ -49,10 +51,7 @@
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="Todas"
-                        android:textColor="@color/chip_text_selector"
-                        app:checkedIconVisible="false"
-                        app:chipBackgroundColor="@color/chip_background_selector"
-                        app:chipStrokeWidth="0dp" />
+                        app:checkedIconEnabled="false" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipEscuela"
@@ -60,10 +59,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Escuela"
-                        android:textColor="@color/chip_text_selector"
-                        app:checkedIconVisible="false"
-                        app:chipBackgroundColor="@color/chip_background_selector"
-                        app:chipStrokeWidth="0dp" />
+                        app:checkedIconEnabled="false" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipTrabajo"
@@ -71,10 +67,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Trabajo"
-                        android:textColor="@color/chip_text_selector"
-                        app:checkedIconVisible="false"
-                        app:chipBackgroundColor="@color/chip_background_selector"
-                        app:chipStrokeWidth="0dp" />
+                        app:checkedIconVisible="false" />
 
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
@@ -95,24 +88,31 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:backgroundTint="@color/primary_blue"
-            android:contentDescription="Agregar"
+            android:backgroundTint="@color/primary_container"
+            android:contentDescription="@string/content_description_add"
             app:maxImageSize="28dp"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"
             app:srcCompat="@drawable/ic_add"
-            app:tint="@color/white" />
+            app:tint="@color/on_primary_container" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Sidebar con ancho reducido -->
+    <!-- Sidebar con ancho ajustado a 240dp -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="@color/surface"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu"
-        app:itemShapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium" />
+        app:itemShapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
+        app:itemVerticalPadding="12dp"
+        app:itemHorizontalPadding="16dp"
+        app:itemIconSize="22dp"
+        app:itemIconPadding="16dp"
+        app:itemTextAppearanceActive="@style/TextAppearance.Material3.LabelLarge"
+        app:itemTextAppearanceInactive="@style/TextAppearance.Material3.LabelLarge" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

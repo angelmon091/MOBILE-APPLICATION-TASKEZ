@@ -1,53 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Sección Principal -->
     <item android:title="Principal">
         <menu>
             <item
                 android:id="@+id/nav_inicio"
                 android:icon="@drawable/ic_home"
-                android:title="Inicio" />
+                android:title="@string/menu_home" />
             <item
                 android:id="@+id/nav_recordatorio"
                 android:icon="@drawable/ic_notifications"
-                android:title="Recordatorio" />
+                android:title="@string/menu_reminders" />
             <item
                 android:id="@+id/nav_favoritos"
                 android:icon="@drawable/ic_star"
-                android:title="Favoritos" />
+                android:title="@string/menu_favorites" />
         </menu>
     </item>
 
-    <!-- Dropdown / Sección de Categorías (Sin Iconos) -->
     <item android:title="Categorías">
         <menu>
             <item
                 android:id="@+id/nav_todas"
-                android:title="Todas" />
+                android:title="@string/menu_all" />
             <item
                 android:id="@+id/nav_escuela"
-                android:title="Escuela" />
+                android:title="@string/menu_school" />
             <item
                 android:id="@+id/nav_proyecto"
-                android:title="Proyecto" />
+                android:title="@string/menu_project" />
             <item
                 android:id="@+id/nav_trabajo"
-                android:title="Trabajo" />
+                android:title="@string/menu_work" />
         </menu>
     </item>
 
-    <!-- Sección de Ajustes -->
-    <item android:title="Ajustes">
+    <item android:title="Aplicación">
         <menu>
             <item
                 android:id="@+id/nav_ajustes"
                 android:icon="@drawable/ic_settings"
-                android:title="Ajustes" />
-            <item
-                android:id="@+id/nav_cerrar_sesion"
-                android:icon="@drawable/ic_logout"
-                android:title="Cerrar Sesión" />
+                android:title="@string/menu_settings" />
         </menu>
     </item>
 

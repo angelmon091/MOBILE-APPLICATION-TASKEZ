@@ -1,11 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.ProyectoFinal" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/primary_blue</item>
-        <item name="android:navigationBarColor">@color/primary_blue</item>
-        <!-- Optional: Ensure icons are visible if the color is light.
-             Since primary_blue is dark, we don't necessarily need windowLightNavigationBar=true -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorPrimaryContainer">@color/primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_primary_container</item>
+        <item name="android:windowBackground">@color/background</item>
+
+        <!-- Barra de estado y navegación transparentes -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Control de color de iconos del sistema (negro en modo claro) -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 
     <style name="Theme.ProyectoFinal" parent="Base.Theme.ProyectoFinal" />
