@@ -1,0 +1,12 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.ProyectoFinal" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="android:navigationBarColor">@color/primary_blue</item>
+        <!-- Optional: Ensure icons are visible if the color is light.
+             Since primary_blue is dark, we don't necessarily need windowLightNavigationBar=true -->
+    </style>
+
+    <style name="Theme.ProyectoFinal" parent="Base.Theme.ProyectoFinal" />
+</resources>
