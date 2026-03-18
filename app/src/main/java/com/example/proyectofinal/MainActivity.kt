@@ -14,6 +14,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var adapter: NoteAdapter
     private var currentFilter = "Todas"
     private var lastNotesList: List<Note> = emptyList()
+    private var currentSearchQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -108,7 +110,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         )
         binding.recyclerView.apply {
-            // Cambio a una sola columna (escalera)
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = this@MainActivity.adapter
         }
@@ -138,10 +139,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun applyCurrentFilter() {
-        val filteredNotes = if (currentFilter == "Todas") {
+        // 1. Primero filtramos por categoría
+        var filteredNotes = if (currentFilter == "Todas") {
             lastNotesList.toList()
         } else {
             lastNotesList.filter { it.category == currentFilter }
+        }
+        
+        // 2. Luego filtramos por búsqueda (si hay texto escrito)
+        if (currentSearchQuery.isNotEmpty()) {
+            filteredNotes = filteredNotes.filter { 
+                it.title.contains(currentSearchQuery, ignoreCase = true) || 
+                it.content.contains(currentSearchQuery, ignoreCase = true) 
+            }
         }
         
         adapter.submitList(filteredNotes) {
@@ -150,6 +160,41 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     binding.recyclerView.scrollToPosition(0)
                 }
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        
+        // Configurar la barra de búsqueda
+        val searchItem = menu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as? SearchView
+        
+        searchView?.apply {
+            queryHint = "Buscar tareas..."
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    currentSearchQuery = newText ?: ""
+                    applyCurrentFilter() // Filtrar en tiempo real
+                    return true
+                }
+            })
+        }
+        
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_more -> {
+                showToast("Más opciones próximamente")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -162,8 +207,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         menu.findItem(R.id.action_pin).title = if (note.isPinned) "Quitar fijado" else "Fijar"
         menu.findItem(R.id.action_lock).title = if (note.isLocked) "Quitar bloqueo" else "Agregar bloqueo"
 
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
+        popup.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
                 R.id.action_pin -> {
                     if (!note.isPinned) {
                         val pinnedCount = lastNotesList.count { it.isPinned }
@@ -228,11 +273,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

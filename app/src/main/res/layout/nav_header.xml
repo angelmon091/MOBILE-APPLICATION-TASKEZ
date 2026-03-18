@@ -12,10 +12,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
         android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
         android:textColor="@color/primary"
-        android:textStyle="bold"
-        android:letterSpacing="-0.02" />
+        android:textStyle="bold" />
 
 </LinearLayout>
