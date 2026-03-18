@@ -18,8 +18,9 @@
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp">
+            android:background="@color/background"
+            app:elevation="0dp"
+            app:liftOnScroll="false"> <!-- CORRECCIÓN: Desactivar tinte al hacer scroll -->
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"

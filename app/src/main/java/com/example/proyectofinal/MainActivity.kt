@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupBackNavigation()
         setupFilters()
         
-        // Solo observamos una vez en todo el ciclo de vida
         observeNotesOnce()
     }
 
@@ -115,11 +114,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setupFilters() {
-        binding.chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
-            currentFilter = when {
-                checkedIds.contains(R.id.chipEscuela) -> "Escuela"
-                checkedIds.contains(R.id.chipTrabajo) -> "Trabajo"
-                else -> "Todas"
+        binding.chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+            // Si no hay ninguno seleccionado (por click rápido), forzamos "Todas"
+            if (checkedIds.isEmpty()) {
+                binding.chipTodas.isChecked = true
+                currentFilter = "Todas"
+            } else {
+                currentFilter = when {
+                    checkedIds.contains(R.id.chipEscuela) -> "Escuela"
+                    checkedIds.contains(R.id.chipTrabajo) -> "Trabajo"
+                    else -> "Todas"
+                }
             }
             applyCurrentFilter()
         }
@@ -133,14 +138,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun applyCurrentFilter() {
+        // Clonamos la lista para asegurar que DiffUtil trabaje con una nueva referencia
         val filteredNotes = if (currentFilter == "Todas") {
-            lastNotesList
+            lastNotesList.toList()
         } else {
             lastNotesList.filter { it.category == currentFilter }
         }
+        
+        // Enviamos la lista filtrada
         adapter.submitList(filteredNotes) {
-            // Volver al inicio al filtrar para evitar que el layout se vea "raro"
-            binding.recyclerView.scrollToPosition(0)
+            // Animación suave al inicio
+            if (filteredNotes.isNotEmpty()) {
+                binding.recyclerView.post {
+                    binding.recyclerView.scrollToPosition(0)
+                }
+            }
         }
     }
 
