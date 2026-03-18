@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:background="@color/background"
             app:elevation="0dp"
-            app:liftOnScroll="false"> <!-- CORRECCIÓN: Desactivar tinte al hacer scroll -->
+            app:liftOnScroll="false">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="@string/menu_all"
-                        app:checkedIconEnabled="false" />
+                        app:checkedIconVisible="false" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipEscuela"
@@ -60,7 +60,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/menu_school"
-                        app:checkedIconEnabled="false" />
+                        app:checkedIconVisible="false" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipTrabajo"
@@ -99,7 +99,6 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Sidebar con ancho ajustado a 240dp -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="240dp"

@@ -1,7 +1,7 @@
 package com.example.proyectofinal
 
+import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        loadCategories()
         setupUI()
         setupRecyclerView()
         setupNavigation()
@@ -133,10 +134,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setupFilters() {
+        // Limpiar excepto el fijo "Todas"
+        binding.chipGroup.removeAllViews()
+        
+        // Agregar "Todas"
+        addChipToGroup("Todas", isDefault = true)
+        
+        // Agregar Escuela y Trabajo
+        addChipToGroup("Escuela", isDefault = true)
+        addChipToGroup("Trabajo", isDefault = true)
+        
+        // Agregar dinámicas cargadas
+        dynamicCategories.forEach { addChipToGroup(it, isDefault = false) }
+
         binding.chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             if (checkedIds.isEmpty()) {
                 if (currentFilter != "Todas") {
-                    binding.chipTodas.isChecked = true
+                    findViewById<Chip>(R.id.chipTodas)?.isChecked = true
                     currentFilter = "Todas"
                     applyCurrentFilter()
                 }
@@ -152,24 +166,62 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
+    }
+
+    private fun addChipToGroup(name: String, isDefault: Boolean) {
+        // Usamos ContextThemeWrapper para aplicar el estilo de Material3 Filter Chip
+        val chipContext = ContextThemeWrapper(this, com.google.android.material.R.style.Widget_Material3_Chip_Filter)
+        val chip = Chip(chipContext)
+        chip.text = name
+        chip.isCheckable = true
+        chip.isClickable = true
         
-        setupChipLongClick(binding.chipEscuela)
-        setupChipLongClick(binding.chipTrabajo)
+        // Estilos uniformes
+        chip.setChipBackgroundColorResource(R.color.chip_background_selector)
+        chip.setTextColor(ContextCompat.getColorStateList(this, R.color.chip_text_selector))
+        chip.isCloseIconVisible = false
+        chip.isChipIconVisible = false
+        chip.isCheckedIconVisible = false
+        
+        if (name == "Todas") {
+            chip.id = R.id.chipTodas
+            chip.isChecked = true
+        } else if (name == "Escuela") {
+            chip.id = R.id.chipEscuela
+        } else if (name == "Trabajo") {
+            chip.id = R.id.chipTrabajo
+        } else {
+            chip.id = View.generateViewId()
+        }
+
+        if (!isDefault || name == "Escuela" || name == "Trabajo") {
+            setupChipLongClick(chip)
+        }
+
+        binding.chipGroup.addView(chip)
     }
 
     private fun setupChipLongClick(chip: Chip) {
         chip.setOnLongClickListener {
-            if (chip.id == R.id.chipTodas) return@setOnLongClickListener false
+            if (chip.text == "Todas") return@setOnLongClickListener false
             
             MaterialAlertDialogBuilder(this)
                 .setTitle("Eliminar sección")
-                .setMessage("¿Estás seguro de que quieres eliminar la sección '${chip.text}'?")
+                .setMessage("¿Estás seguro de que quieres eliminar la sección '${chip.text}'? Las notas pasarán a la sección 'Todas'.")
                 .setPositiveButton("Eliminar") { _, _ ->
+                    val categoryToDelete = chip.text.toString()
+                    
+                    // 1. Mover notas de esta categoría a "Todas" en la base de datos
+                    moveNotesToGeneral(categoryToDelete)
+                    
+                    // 2. Eliminar de la UI y persistencia
                     binding.chipGroup.removeView(chip)
-                    dynamicCategories.remove(chip.text.toString())
-                    if (currentFilter == chip.text.toString()) {
-                        binding.chipTodas.isChecked = true
+                    dynamicCategories.remove(categoryToDelete)
+                    saveCategories()
+                    
+                    if (currentFilter == categoryToDelete) {
                         currentFilter = "Todas"
+                        findViewById<Chip>(R.id.chipTodas)?.isChecked = true
                         applyCurrentFilter()
                     }
                 }
@@ -177,6 +229,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .show()
             true
         }
+    }
+
+    private fun moveNotesToGeneral(category: String) {
+        // En lugar de borrar las notas, las movemos a "Todas"
+        lastNotesList.filter { it.category == category }.forEach { note ->
+            viewModel.update(note.copy(category = "Todas"))
+        }
+    }
+
+    private fun saveCategories() {
+        val sharedPref = getSharedPreferences("TaskEzzPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putStringSet("DYNAMIC_CATEGORIES", dynamicCategories.toSet())
+        editor.apply()
+    }
+
+    private fun loadCategories() {
+        val sharedPref = getSharedPreferences("TaskEzzPrefs", Context.MODE_PRIVATE)
+        val saved = sharedPref.getStringSet("DYNAMIC_CATEGORIES", emptySet())
+        dynamicCategories.clear()
+        dynamicCategories.addAll(saved ?: emptySet())
     }
 
     private fun observeNotesOnce() {
@@ -187,14 +260,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun applyCurrentFilter() {
-        // 1. Filtrar por categoría
         var filteredNotes = if (currentFilter == "Todas") {
             lastNotesList.toList()
         } else {
             lastNotesList.filter { it.category == currentFilter }
         }
         
-        // 2. Filtrar por búsqueda
         if (currentSearchQuery.isNotEmpty()) {
             filteredNotes = filteredNotes.filter { 
                 it.title.contains(currentSearchQuery, ignoreCase = true) || 
@@ -202,15 +273,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        // 3. Ordenar con prioridad para los fijados (isPinned)
         filteredNotes = if (currentSortOrder == "alpha") {
-            // Primero fijados, luego orden alfabético
             filteredNotes.sortedWith(
                 compareByDescending<Note> { it.isPinned }
                     .thenBy { it.title.lowercase() }
             )
         } else {
-            // Primero fijados, luego orden por fecha descendente
             filteredNotes.sortedWith(
                 compareByDescending<Note> { it.isPinned }
                     .thenByDescending { it.date }
@@ -324,7 +392,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         input.layoutParams = params
         input.hint = "Nombre de la sección"
         
-        // Colores adaptables al tema
         input.setTextColor(ContextCompat.getColor(this, R.color.on_background))
         input.setHintTextColor(ContextCompat.getColor(this, R.color.on_surface_variant))
         
@@ -346,7 +413,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         dialog.setOnShowListener {
             val window = dialog.window
-            // Fondo adaptable (blanco en claro, gris oscuro en noche)
             window?.setBackgroundDrawableResource(R.drawable.bg_dialog_section)
             
             val blueColor = ContextCompat.getColor(this, R.color.primary)
@@ -364,18 +430,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return
             }
 
-            val newChip = Chip(this, null, com.google.android.material.R.attr.chipStyle)
-            newChip.id = View.generateViewId()
-            newChip.text = name
-            newChip.isCheckable = true
-            newChip.isClickable = true
-            
-            newChip.setChipBackgroundColorResource(R.color.chip_background_selector)
-            newChip.setTextColor(ContextCompat.getColorStateList(this, R.color.chip_text_selector))
-            
-            binding.chipGroup.addView(newChip)
             dynamicCategories.add(name)
-            setupChipLongClick(newChip)
+            saveCategories()
+            addChipToGroup(name, isDefault = false)
             
             showToast("Sección '$name' agregada")
         } catch (e: Exception) {
@@ -470,12 +527,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun handleNavigationAction(id: Int) {
         when (id) {
             R.id.nav_inicio -> {
-                binding.chipTodas.isChecked = true
+                findViewById<Chip>(R.id.chipTodas)?.isChecked = true
                 showToast(getString(R.string.toast_home_selected))
             }
-            R.id.nav_escuela -> binding.chipEscuela.isChecked = true
-            R.id.nav_trabajo -> binding.chipTrabajo.isChecked = true
-            R.id.nav_todas -> binding.chipTodas.isChecked = true
+            R.id.nav_escuela -> findViewById<Chip>(R.id.chipEscuela)?.isChecked = true
+            R.id.nav_trabajo -> findViewById<Chip>(R.id.chipTrabajo)?.isChecked = true
+            R.id.nav_todas -> findViewById<Chip>(R.id.chipTodas)?.isChecked = true
             else -> showToast("Opción seleccionada: ${getString(getMenuTitleRes(id))}")
         }
     }
