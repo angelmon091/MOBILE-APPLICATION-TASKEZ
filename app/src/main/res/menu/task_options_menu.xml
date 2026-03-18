@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_pin"
+        android:icon="@drawable/ic_star"
+        android:title="Fijar" />
+    <item
+        android:id="@+id/action_lock"
+        android:icon="@drawable/ic_settings"
+        android:title="Agregar bloqueo" />
+    <item
+        android:id="@+id/action_duplicate"
+        android:icon="@drawable/ic_assignment"
+        android:title="Duplicar" />
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_logout"
+        android:title="Eliminar" />
+</menu>

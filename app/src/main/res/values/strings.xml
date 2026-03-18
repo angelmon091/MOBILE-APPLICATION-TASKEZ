@@ -11,4 +11,15 @@
 
     <string name="toast_home_selected">Inicio seleccionado</string>
     <string name="content_description_add">Agregar nuevo elemento</string>
+
+    <!-- Pantalla de Agregar Tarea -->
+    <string name="hint_task_title">Título de la tarea</string>
+    <string name="hint_task_content">Añade una nota a esta tarea...</string>
+    <string name="btn_save">Guardar</string>
+    <string name="content_description_back">Regresar</string>
+    <string name="content_description_palette">Cambiar color</string>
+    <string name="content_description_notifications">Establecer recordatorio</string>
+    <string name="content_description_star">Marcar como importante</string>
+    <string name="toast_task_saved">Tarea guardada</string>
+    <string name="toast_task_empty">La tarea no puede estar vacía</string>
 </resources>

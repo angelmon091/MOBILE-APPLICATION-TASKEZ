@@ -21,7 +21,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Regresar"
+            android:contentDescription="@string/content_description_back"
             android:src="@drawable/ic_back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,7 @@
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Guardar"
+            android:text="@string/btn_save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,6 +50,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="24dp">
 
@@ -57,23 +58,30 @@
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
                 tools:text="Lunes, 22 de Mayo a las 12:30"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textColor="@color/on_surface_variant" />
 
+            <!-- Corrección: minHeight para el área de toque, maxWidth para legibilidad y hint color -->
             <EditText
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@null"
-                android:hint="Título "
+                android:hint="@string/hint_task_title"
                 android:importantForAutofill="no"
                 android:inputType="textCapSentences"
+                android:minHeight="48dp"
+                android:maxWidth="600dp"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
                 android:textColor="@color/on_surface"
-                android:textStyle="bold" />
+                android:textColorHint="@color/on_surface_variant"
+                android:textStyle="bold"
+                tools:ignore="VisualLintTextFieldSize" />
 
+            <!-- Corrección: maxWidth para legibilidad y hint color -->
             <EditText
                 android:id="@+id/etContent"
                 android:layout_width="match_parent"
@@ -81,12 +89,15 @@
                 android:layout_marginTop="12dp"
                 android:background="@null"
                 android:gravity="top"
-                android:hint="Añade una nota..."
+                android:hint="@string/hint_task_content"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine"
                 android:minHeight="300dp"
+                android:maxWidth="600dp"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textColor="@color/on_surface" />
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/on_surface_variant"
+                tools:ignore="VisualLintTextFieldSize" />
 
         </LinearLayout>
     </ScrollView>
@@ -111,6 +122,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/content_description_palette"
                 android:src="@drawable/ic_palette"
                 app:tint="@color/on_surface_variant" />
 
@@ -118,6 +130,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/content_description_notifications"
                 android:src="@drawable/ic_notifications"
                 app:tint="@color/on_surface_variant" />
 
@@ -125,6 +138,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/content_description_star"
                 android:src="@drawable/ic_star"
                 app:tint="@color/on_surface_variant" />
 

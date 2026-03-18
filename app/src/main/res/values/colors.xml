@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- TaskEzz Minimalist Palette - Light Mode -->
-    <color name="primary">#1976D2</color> <!-- Blue for accents/selected -->
+    <color name="primary">#1976D2</color>
     <color name="on_primary">#FFFFFF</color>
     <color name="primary_container">#E3F2FD</color>
     <color name="on_primary_container">#1976D2</color>
 
     <color name="background">#FFFFFF</color>
-    <color name="on_background">#1C1B1F</color>
+    <color name="on_background">#202124</color>
 
-    <color name="surface">#FFFFFF</color>
-    <color name="on_surface">#1C1B1F</color>
-    <color name="surface_variant">#F5F5F5</color>
-    <color name="on_surface_variant">#49454F</color>
+    <color name="surface">#FFFFFF</color> <!-- Menú ahora es blanco para que sea homogéneo -->
+    <color name="on_surface">#202124</color>
+    <color name="surface_variant">#F1F3F4</color> <!-- Tareas usan el gris suave -->
+    <color name="on_surface_variant">#5F6368</color>
 
     <color name="outline">#79747E</color>
 
-    <!-- Essential aliases and build fixes -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary_blue">#1976D2</color>
 
-    <!-- Resources required by existing layouts -->
-    <color name="card_background">#FFFFFF</color>
-    <color name="chip_background">#F5F5F5</color>
+    <!-- Fondo de las tarjetas -->
+    <color name="card_background">#F1F3F4</color>
 </resources>

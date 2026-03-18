@@ -11,16 +11,23 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
 
-        <!-- Control de color de iconos del sistema (negro en modo claro) -->
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+
+        <!-- Forzar estilo de PopupMenu -->
+        <item name="popupMenuStyle">@style/CustomPopupMenuStyle</item>
     </style>
 
     <style name="Theme.ProyectoFinal" parent="Base.Theme.ProyectoFinal" />
 
-    <!-- Tema para la Pantalla de Carga (Splash Screen API) compatible con versiones < Android 12 -->
+    <!-- Estilo de Menú con Redondeo Real -->
+    <style name="CustomPopupMenuStyle" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_popup_menu</item>
+        <item name="android:popupElevation">8dp</item>
+    </style>
+
+    <!-- Tema para la Pantalla de Carga -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <!-- Sin el prefijo android: para compatibilidad hacia atrás -->
         <item name="windowSplashScreenBackground">@color/background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logoapp</item>
         <item name="windowSplashScreenAnimationDuration">1000</item>

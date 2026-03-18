@@ -6,9 +6,10 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardBackgroundColor="@color/card_background"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="0dp"
-    app:strokeWidth="0dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/surface_variant">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,37 +20,41 @@
             android:id="@+id/textViewTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="18sp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/on_surface"
+            android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Proyecto escolar" />
+            tools:text="Título de la tarea" />
 
         <TextView
             android:id="@+id/textViewDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="#757575"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:maxLines="6"
+            android:textColor="@color/on_surface_variant"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-            tools:text="Realizar las tareas pendientes de las clases de miguel y ramon" />
+            tools:text="Esta es una descripción corta para probar el contraste y el redondeo de la tarjeta..." />
 
         <TextView
             android:id="@+id/textViewDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textColor="#9E9E9E"
-            android:textSize="10sp"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewDescription"
-            tools:text="12:04 am" />
+            tools:text="Lunes, 22 de mayo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

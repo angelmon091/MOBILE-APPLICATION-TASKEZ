@@ -4,8 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +19,6 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.proyectofinal.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationView
@@ -32,17 +34,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var adapter: NoteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 1. Instalar y configurar la duración del Splash Screen
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition { keepSplashScreen }
         
-        // Simulamos una carga de 2 segundos (Norma de Android para que sea visible)
         Handler(Looper.getMainLooper()).postDelayed({
             keepSplashScreen = false
         }, 2000)
 
         super.onCreate(savedInstanceState)
-        
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -84,15 +83,51 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setupRecyclerView() {
-        adapter = NoteAdapter { note ->
-            // Por ahora solo mostramos un toast al hacer click
-            showToast("Editando: ${note.title}")
-        }
+        adapter = NoteAdapter(
+            onItemClick = { note ->
+                showToast("Abriendo tarea: ${note.title}")
+            },
+            onItemLongClick = { note, view ->
+                showTaskOptions(note, view)
+            }
+        )
         binding.recyclerView.apply {
-            // Usamos StaggeredGridLayoutManager para un look tipo Google Keep
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = this@MainActivity.adapter
         }
+    }
+
+    private fun showTaskOptions(note: Note, view: View) {
+        // Forzamos el uso de nuestro estilo redondeado mediante ContextThemeWrapper
+        val wrapper = ContextThemeWrapper(this, R.style.CustomPopupMenuStyle)
+        val popup = PopupMenu(wrapper, view)
+        popup.menuInflater.inflate(R.menu.task_options_menu, popup.menu)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_pin -> {
+                    showToast("Tarea fijada: ${note.title}")
+                    true
+                }
+                R.id.action_lock -> {
+                    showToast("Bloqueo agregado a: ${note.title}")
+                    true
+                }
+                R.id.action_duplicate -> {
+                    val duplicateTask = note.copy(id = 0, title = "${note.title} (Copia)")
+                    viewModel.insert(duplicateTask)
+                    showToast("Tarea duplicada")
+                    true
+                }
+                R.id.action_delete -> {
+                    viewModel.delete(note)
+                    showToast("Tarea eliminada")
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 
     private fun observeNotes() {
@@ -133,10 +168,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun handleNavigationAction(id: Int) {
         when (id) {
             R.id.nav_inicio -> showToast(getString(R.string.toast_home_selected))
-            R.id.nav_recordatorio, R.id.nav_favoritos, R.id.nav_todas,
-            R.id.nav_escuela, R.id.nav_proyecto, R.id.nav_trabajo, R.id.nav_ajustes -> {
-                showToast("Opción seleccionada: ${getString(getMenuTitleRes(id))}")
-            }
+            else -> showToast("Opción seleccionada: ${getString(getMenuTitleRes(id))}")
         }
     }
 
