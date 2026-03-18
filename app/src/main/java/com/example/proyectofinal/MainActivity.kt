@@ -207,12 +207,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             
             MaterialAlertDialogBuilder(this)
                 .setTitle("Eliminar sección")
-                .setMessage("¿Estás seguro de que quieres eliminar la sección '${chip.text}'? Las notas pasarán a la sección 'Todas'.")
+                .setMessage("¿Estás seguro de que quieres eliminar la sección '${chip.text}'? Todas las notas dentro de esta sección también se borrarán.")
                 .setPositiveButton("Eliminar") { _, _ ->
                     val categoryToDelete = chip.text.toString()
                     
-                    // 1. Mover notas de esta categoría a "Todas" en la base de datos
-                    moveNotesToGeneral(categoryToDelete)
+                    // 1. Borrar notas de esta categoría en la base de datos
+                    deleteNotesInCategory(categoryToDelete)
                     
                     // 2. Eliminar de la UI y persistencia
                     binding.chipGroup.removeView(chip)
@@ -231,10 +231,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun moveNotesToGeneral(category: String) {
-        // En lugar de borrar las notas, las movemos a "Todas"
+    private fun deleteNotesInCategory(category: String) {
+        // Borramos todas las notas que pertenecen a esta categoría
         lastNotesList.filter { it.category == category }.forEach { note ->
-            viewModel.update(note.copy(category = "Todas"))
+            viewModel.delete(note)
         }
     }
 
