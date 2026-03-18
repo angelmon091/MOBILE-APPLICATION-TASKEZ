@@ -11,5 +11,7 @@ data class Note(
     val content: String,
     val date: String,
     val category: String = "Todas",
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val isPinned: Boolean = false,
+    val isLocked: Boolean = false
 )

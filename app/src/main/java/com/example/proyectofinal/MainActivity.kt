@@ -34,12 +34,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var adapter: NoteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 1. Instalar Splash Screen
         val splashScreen = installSplashScreen()
-        splashScreen.setKeepOnScreenCondition { keepSplashScreen }
         
-        Handler(Looper.getMainLooper()).postDelayed({
+        // CORRECCIÓN: Si savedInstanceState NO es nulo, significa que es una recreación 
+        // (por cambio de tema o rotación) y no queremos mostrar el splash de nuevo.
+        if (savedInstanceState != null) {
             keepSplashScreen = false
-        }, 2000)
+        } else {
+            splashScreen.setKeepOnScreenCondition { keepSplashScreen }
+            // Solo esperar 2 segundos en el primer arranque frío
+            Handler(Looper.getMainLooper()).postDelayed({
+                keepSplashScreen = false
+            }, 2000)
+        }
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -85,7 +93,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun setupRecyclerView() {
         adapter = NoteAdapter(
             onItemClick = { note ->
-                showToast("Abriendo tarea: ${note.title}")
+                if (note.isLocked) {
+                    showToast("Esta tarea está bloqueada. Quita el bloqueo para editar.")
+                } else {
+                    // Implementar navegación a edición aquí
+                    showToast("Abriendo tarea: ${note.title}")
+                }
             },
             onItemLongClick = { note, view ->
                 showTaskOptions(note, view)
@@ -98,19 +111,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun showTaskOptions(note: Note, view: View) {
-        // Forzamos el uso de nuestro estilo redondeado mediante ContextThemeWrapper
         val wrapper = ContextThemeWrapper(this, R.style.CustomPopupMenuStyle)
         val popup = PopupMenu(wrapper, view)
         popup.menuInflater.inflate(R.menu.task_options_menu, popup.menu)
 
+        val menu = popup.menu
+        menu.findItem(R.id.action_pin).title = if (note.isPinned) "Quitar fijado" else "Fijar"
+        menu.findItem(R.id.action_lock).title = if (note.isLocked) "Quitar bloqueo" else "Agregar bloqueo"
+
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_pin -> {
-                    showToast("Tarea fijada: ${note.title}")
+                    val updatedNote = note.copy(isPinned = !note.isPinned)
+                    viewModel.update(updatedNote)
+                    showToast(if (updatedNote.isPinned) "Tarea fijada" else "Tarea desfijada")
                     true
                 }
                 R.id.action_lock -> {
-                    showToast("Bloqueo agregado a: ${note.title}")
+                    val updatedNote = note.copy(isLocked = !note.isLocked)
+                    viewModel.update(updatedNote)
+                    showToast(if (updatedNote.isLocked) "Bloqueo agregado" else "Bloqueo quitado")
                     true
                 }
                 R.id.action_duplicate -> {

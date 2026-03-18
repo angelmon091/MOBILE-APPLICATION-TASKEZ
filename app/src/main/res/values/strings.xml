@@ -13,8 +13,8 @@
     <string name="content_description_add">Agregar nuevo elemento</string>
 
     <!-- Pantalla de Agregar Tarea -->
-    <string name="hint_task_title">Título de la tarea</string>
-    <string name="hint_task_content">Añade una nota a esta tarea...</string>
+    <string name="hint_task_title">Título</string>
+    <string name="hint_task_content">Añade una nota...</string>
     <string name="btn_save">Guardar</string>
     <string name="content_description_back">Regresar</string>
     <string name="content_description_palette">Cambiar color</string>

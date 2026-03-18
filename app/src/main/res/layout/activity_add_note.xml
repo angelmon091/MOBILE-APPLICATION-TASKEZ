@@ -64,6 +64,8 @@
                 android:textColor="@color/on_surface_variant" />
 
             <!-- Corrección: minHeight para el área de toque, maxWidth para legibilidad y hint color -->
+
+            <!-- Corrección: maxWidth para legibilidad y hint color -->
             <EditText
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
@@ -73,15 +75,14 @@
                 android:hint="@string/hint_task_title"
                 android:importantForAutofill="no"
                 android:inputType="textCapSentences"
-                android:minHeight="48dp"
                 android:maxWidth="600dp"
+                android:minHeight="48dp"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
                 android:textColor="@color/on_surface"
                 android:textColorHint="@color/on_surface_variant"
                 android:textStyle="bold"
                 tools:ignore="VisualLintTextFieldSize" />
 
-            <!-- Corrección: maxWidth para legibilidad y hint color -->
             <EditText
                 android:id="@+id/etContent"
                 android:layout_width="match_parent"
