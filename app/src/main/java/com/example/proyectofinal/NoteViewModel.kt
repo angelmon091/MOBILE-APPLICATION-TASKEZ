@@ -22,4 +22,8 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun update(note: Note) = viewModelScope.launch {
         dao.update(note)
     }
+
+    suspend fun getNoteById(id: Int): Note? {
+        return dao.getNoteById(id)
+    }
 }

@@ -8,7 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import com.example.proyectofinal.databinding.ActivityAddNoteBinding
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -20,6 +22,8 @@ class AddNoteActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddNoteBinding
     private val viewModel: NoteViewModel by viewModels()
+    private var existingNote: Note? = null
+    private var category: String = "Todas"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +32,32 @@ class AddNoteActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupUI()
-        setCurrentDate()
+        
+        // Obtener categoría del intent si es una tarea nueva
+        category = intent.getStringExtra("CATEGORY_EXTRA") ?: "Todas"
+        
+        // Cargar tarea si venimos de una edición
+        val noteId = intent.getIntExtra("NOTE_ID", -1)
+        if (noteId != -1) {
+            loadExistingNote(noteId)
+        } else {
+            setCurrentDate()
+        }
+    }
+
+    private fun loadExistingNote(id: Int) {
+        lifecycleScope.launch {
+            existingNote = viewModel.getNoteById(id)
+            existingNote?.let { note ->
+                binding.etTitle.setText(note.title)
+                binding.etContent.setText(note.content)
+                binding.tvDate.text = note.date
+                category = note.category // Mantener la categoría original al editar
+            }
+        }
     }
 
     private fun setupUI() {
-        // Manejo de Insets para respetar las barras del sistema
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(
@@ -40,50 +65,58 @@ class AddNoteActivity : AppCompatActivity() {
                 right = systemBars.right,
                 bottom = systemBars.bottom
             )
-            // La Toolbar superior maneja el padding del status bar
             binding.toolbar.updatePadding(top = systemBars.top)
             insets
         }
 
-        // Botón para regresar a la pantalla principal
         binding.btnBack.setOnClickListener {
             finish()
         }
 
-        // Botón para guardar la tarea
         binding.btnSave.setOnClickListener {
             saveNote()
         }
     }
 
     private fun saveNote() {
-        val title = binding.etTitle.text.toString().trim()
+        val titleInput = binding.etTitle.text.toString().trim()
         val content = binding.etContent.text.toString().trim()
         val date = binding.tvDate.text.toString()
 
-        if (title.isEmpty() && content.isEmpty()) {
+        if (titleInput.isEmpty() && content.isEmpty()) {
             Toast.makeText(this, "La tarea no puede estar vacía", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val note = Note(
-            title = if (title.isEmpty()) "Sin título" else title,
-            content = content,
-            date = date
-        )
+        val finalTitle = if (titleInput.isEmpty()) "Sin título" else titleInput
 
-        viewModel.insert(note)
-        Toast.makeText(this, "Tarea guardada", Toast.LENGTH_SHORT).show()
+        if (existingNote != null) {
+            // Actualizar existente
+            val updatedNote = existingNote!!.copy(
+                title = finalTitle,
+                content = content,
+                category = category
+            )
+            viewModel.update(updatedNote)
+            Toast.makeText(this, "Tarea actualizada", Toast.LENGTH_SHORT).show()
+        } else {
+            // Crear nueva
+            val newNote = Note(
+                title = finalTitle,
+                content = content,
+                date = date,
+                category = category
+            )
+            viewModel.insert(newNote)
+            Toast.makeText(this, "Tarea guardada", Toast.LENGTH_SHORT).show()
+        }
+        
         finish()
     }
 
-    /**
-     * Establece la fecha actual automáticamente en el formato solicitado.
-     */
     private fun setCurrentDate() {
         val sdf = SimpleDateFormat("EEEE, d 'de' MMMM 'a las' HH:mm", Locale("es", "ES"))
         val currentDate = sdf.format(Date())
-        // Capitalizar la primera letra
         binding.tvDate.text = currentDate.replaceFirstChar { it.uppercase() }
     }
 }

@@ -63,9 +63,6 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textColor="@color/on_surface_variant" />
 
-            <!-- Corrección: minHeight para el área de toque, maxWidth para legibilidad y hint color -->
-
-            <!-- Corrección: maxWidth para legibilidad y hint color -->
             <EditText
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
@@ -120,6 +117,7 @@
             android:paddingHorizontal="12dp">
 
             <ImageButton
+                android:id="@+id/btnPalette"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -128,6 +126,7 @@
                 app:tint="@color/on_surface_variant" />
 
             <ImageButton
+                android:id="@+id/btnNotifications"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -136,6 +135,7 @@
                 app:tint="@color/on_surface_variant" />
 
             <ImageButton
+                android:id="@+id/btnStar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"

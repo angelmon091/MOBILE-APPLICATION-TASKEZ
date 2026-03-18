@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var keepSplashScreen = true
     private val viewModel: NoteViewModel by viewModels()
     private lateinit var adapter: NoteAdapter
+    private var currentFilter = "Todas"
+    private var lastNotesList: List<Note> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -53,7 +55,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupRecyclerView()
         setupNavigation()
         setupBackNavigation()
-        observeNotes()
+        setupFilters()
+        
+        // Solo observamos una vez en todo el ciclo de vida
+        observeNotesOnce()
     }
 
     private fun setupUI() {
@@ -80,7 +85,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         binding.fab.setOnClickListener {
-            val intent = Intent(this, AddNoteActivity::class.java)
+            val intent = Intent(this, AddNoteActivity::class.java).apply {
+                putExtra("CATEGORY_EXTRA", currentFilter)
+            }
             startActivity(intent)
         }
     }
@@ -91,7 +98,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (note.isLocked) {
                     showToast("Esta tarea está bloqueada. Quita el bloqueo para editar.")
                 } else {
-                    showToast("Abriendo tarea: ${note.title}")
+                    val intent = Intent(this, AddNoteActivity::class.java).apply {
+                        putExtra("NOTE_ID", note.id)
+                    }
+                    startActivity(intent)
                 }
             },
             onItemLongClick = { note, view ->
@@ -101,6 +111,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.recyclerView.apply {
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = this@MainActivity.adapter
+        }
+    }
+
+    private fun setupFilters() {
+        binding.chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            currentFilter = when {
+                checkedIds.contains(R.id.chipEscuela) -> "Escuela"
+                checkedIds.contains(R.id.chipTrabajo) -> "Trabajo"
+                else -> "Todas"
+            }
+            applyCurrentFilter()
+        }
+    }
+
+    private fun observeNotesOnce() {
+        viewModel.allNotes.observe(this) { notes ->
+            lastNotesList = notes
+            applyCurrentFilter()
+        }
+    }
+
+    private fun applyCurrentFilter() {
+        val filteredNotes = if (currentFilter == "Todas") {
+            lastNotesList
+        } else {
+            lastNotesList.filter { it.category == currentFilter }
+        }
+        adapter.submitList(filteredNotes) {
+            // Volver al inicio al filtrar para evitar que el layout se vea "raro"
+            binding.recyclerView.scrollToPosition(0)
         }
     }
 
@@ -117,27 +157,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             when (item.itemId) {
                 R.id.action_pin -> {
                     if (!note.isPinned) {
-                        // Intentando fijar: Verificar límite de 3
-                        val pinnedCount = adapter.currentList.count { it.isPinned }
+                        val pinnedCount = lastNotesList.count { it.isPinned }
                         if (pinnedCount >= 3) {
                             showToast("Solo puedes fijar un máximo de 3 tareas")
                             return@setOnMenuItemClickListener true
                         }
                     }
-
                     val updatedNote = note.copy(isPinned = !note.isPinned)
                     viewModel.update(updatedNote)
                     showToast(if (updatedNote.isPinned) "Tarea fijada" else "Tarea desfijada")
                     true
                 }
                 R.id.action_lock -> {
+                    if (!note.isLocked) {
+                        val lockedCount = lastNotesList.count { it.isLocked }
+                        if (lockedCount >= 5) {
+                            showToast("Solo puedes bloquear un máximo de 5 tareas")
+                            return@setOnMenuItemClickListener true
+                        }
+                    }
                     val updatedNote = note.copy(isLocked = !note.isLocked)
                     viewModel.update(updatedNote)
                     showToast(if (updatedNote.isLocked) "Bloqueo agregado" else "Bloqueo quitado")
                     true
                 }
                 R.id.action_duplicate -> {
-                    val duplicateTask = note.copy(id = 0, title = "${note.title} (Copia)")
+                    val duplicateTask = note.copy(
+                        id = 0, 
+                        title = "${note.title} (Copia)",
+                        isPinned = false,
+                        isLocked = false
+                    )
                     viewModel.insert(duplicateTask)
                     showToast("Tarea duplicada")
                     true
@@ -151,12 +201,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         popup.show()
-    }
-
-    private fun observeNotes() {
-        viewModel.allNotes.observe(this) { notes ->
-            adapter.submitList(notes)
-        }
     }
 
     private fun setupNavigation() {
@@ -190,7 +234,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun handleNavigationAction(id: Int) {
         when (id) {
-            R.id.nav_inicio -> showToast(getString(R.string.toast_home_selected))
+            R.id.nav_inicio -> {
+                binding.chipTodas.isChecked = true
+                showToast(getString(R.string.toast_home_selected))
+            }
+            R.id.nav_escuela -> binding.chipEscuela.isChecked = true
+            R.id.nav_trabajo -> binding.chipTrabajo.isChecked = true
             else -> showToast("Opción seleccionada: ${getString(getMenuTitleRes(id))}")
         }
     }
