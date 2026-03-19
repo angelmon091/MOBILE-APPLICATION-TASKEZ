@@ -136,10 +136,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun setupFilters() {
         // Limpiar excepto el fijo "Todas"
         binding.chipGroup.removeAllViews()
-        
+
         // Agregar "Todas" (única que no se puede eliminar)
         addChipToGroup("Todas", isDefault = true)
-        
+
         // Agregar dinámicas cargadas (incluyendo Escuela y Trabajo si no han sido eliminadas)
         dynamicCategories.forEach { addChipToGroup(it, isDefault = false) }
 
@@ -207,15 +207,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .setMessage("¿Estás seguro de que quieres eliminar la sección '${chip.text}'? Todas las notas dentro de esta sección también se borrarán.")
                 .setPositiveButton("Eliminar") { _, _ ->
                     val categoryToDelete = chip.text.toString()
-                    
+
                     // 1. Borrar notas de esta categoría en la base de datos
                     deleteNotesInCategory(categoryToDelete)
-                    
+
                     // 2. Eliminar de la UI y persistencia
                     binding.chipGroup.removeView(chip)
                     dynamicCategories.remove(categoryToDelete)
                     saveCategories()
-                    
+
                     if (currentFilter == categoryToDelete) {
                         currentFilter = "Todas"
                         findViewById<Chip>(R.id.chipTodas)?.isChecked = true
@@ -440,7 +440,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             dynamicCategories.add(name)
             saveCategories()
             addChipToGroup(name, isDefault = false)
-            
+
             showToast("Sección '$name' agregada")
         } catch (e: Exception) {
             e.printStackTrace()
@@ -536,6 +536,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_inicio -> {
                 findViewById<Chip>(R.id.chipTodas)?.isChecked = true
                 showToast(getString(R.string.toast_home_selected))
+            }
+            R.id.nav_recordatorio -> {
+                startActivity(Intent(this, RemindersActivity::class.java))
             }
             R.id.nav_escuela -> findViewById<Chip>(R.id.chipEscuela)?.isChecked = true
             R.id.nav_trabajo -> findViewById<Chip>(R.id.chipTrabajo)?.isChecked = true

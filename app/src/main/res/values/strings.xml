@@ -24,4 +24,19 @@
     <string name="toast_task_empty">La tarea no puede estar vacía</string>
     <string name="content_description_pinned">Tarea fijada</string>
     <string name="content_description_locked">Tarea bloqueada</string>
+
+    <!-- Reminders -->
+    <string name="title_reminders">Recordatorios</string>
+    <string name="hint_reminder_title">¿Qué quieres recordar?</string>
+    <string name="btn_add">Agregar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="dialog_new_reminder">Nuevo Recordatorio</string>
+    <string name="dialog_delete_reminder">Eliminar recordatorio</string>
+    <string name="msg_delete_reminder_confirm">¿Estás seguro de que quieres eliminar este recordatorio?</string>
+    <string name="btn_delete">Eliminar</string>
+    <string name="priority_high">Prioridad alta</string>
+    <string name="today">Hoy</string>
+    <string name="tab_pending">Pendientes</string>
+    <string name="tab_completed">Completadas</string>
+    <string name="empty_reminders">No hay recordatorios</string>
 </resources>
