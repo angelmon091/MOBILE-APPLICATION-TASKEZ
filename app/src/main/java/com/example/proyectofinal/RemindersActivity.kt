@@ -5,8 +5,9 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -24,12 +25,14 @@ import java.util.*
 class RemindersActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRemindersBinding
-    private val viewModel: ReminderViewModel by viewModels()
+    private val reminderViewModel: ReminderViewModel by viewModels()
+    private val noteViewModel: NoteViewModel by viewModels()
     private lateinit var adapter: ReminderAdapter
     
     private var selectedDate = Calendar.getInstance()
     private var selectedTime = Calendar.getInstance()
     private var currentReminders: List<Reminder> = emptyList()
+    private var allNotes: List<Note> = emptyList()
     private var showCompleted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +44,7 @@ class RemindersActivity : AppCompatActivity() {
         setupUI()
         setupRecyclerView()
         setupTabs()
-        observeReminders()
+        observeData()
     }
 
     private fun setupUI() {
@@ -64,7 +67,7 @@ class RemindersActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = ReminderAdapter(
             onToggleComplete = { reminder ->
-                viewModel.updateCompletionStatus(reminder.id, !reminder.isCompleted)
+                reminderViewModel.updateCompletionStatus(reminder.id, !reminder.isCompleted)
             },
             onDelete = { reminder ->
                 showDeleteConfirmation(reminder)
@@ -88,10 +91,13 @@ class RemindersActivity : AppCompatActivity() {
         })
     }
 
-    private fun observeReminders() {
-        viewModel.allReminders.observe(this) { reminders ->
+    private fun observeData() {
+        reminderViewModel.allReminders.observe(this) { reminders ->
             currentReminders = reminders
             filterReminders()
+        }
+        noteViewModel.allNotes.observe(this) { notes ->
+            allNotes = notes
         }
     }
 
@@ -110,10 +116,15 @@ class RemindersActivity : AppCompatActivity() {
 
     private fun showAddReminderDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_reminder, null)
-        val etTitle = dialogView.findViewById<EditText>(R.id.etReminderTitle)
+        val actvTaskSelector = dialogView.findViewById<AutoCompleteTextView>(R.id.actvTaskSelector)
         val btnDate = dialogView.findViewById<Button>(R.id.btnPickDate)
         val btnTime = dialogView.findViewById<Button>(R.id.btnPickTime)
         val cbHighPriority = dialogView.findViewById<MaterialCheckBox>(R.id.cbHighPriority)
+        
+        // Configurar el adaptador para el selector de tareas
+        val taskTitles = allNotes.map { it.title }
+        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, taskTitles)
+        actvTaskSelector.setAdapter(arrayAdapter)
         
         selectedDate = Calendar.getInstance()
         selectedTime = Calendar.getInstance()
@@ -145,21 +156,21 @@ class RemindersActivity : AppCompatActivity() {
             .setTitle(getString(R.string.dialog_new_reminder))
             .setView(dialogView)
             .setPositiveButton(getString(R.string.btn_add)) { _, _ ->
-                val title = etTitle.text.toString().trim()
-                if (title.isNotEmpty()) {
+                val selectedTaskTitle = actvTaskSelector.text.toString().trim()
+                if (selectedTaskTitle.isNotEmpty()) {
                     val dbDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val dbTimeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                     
                     val reminder = Reminder(
-                        title = title,
+                        title = selectedTaskTitle,
                         dueDate = dbDateFormat.format(selectedDate.time),
                         dueTime = dbTimeFormat.format(selectedTime.time),
                         priority = if (cbHighPriority.isChecked) 1 else 0,
-                        category = "General"
+                        category = allNotes.find { it.title == selectedTaskTitle }?.category ?: "General"
                     )
-                    viewModel.insert(reminder)
+                    reminderViewModel.insert(reminder)
                 } else {
-                    Toast.makeText(this, getString(R.string.toast_task_empty), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Por favor selecciona una tarea", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton(getString(R.string.btn_cancel), null)
@@ -171,7 +182,7 @@ class RemindersActivity : AppCompatActivity() {
             .setTitle(getString(R.string.dialog_delete_reminder))
             .setMessage(getString(R.string.msg_delete_reminder_confirm))
             .setPositiveButton(getString(R.string.btn_delete)) { _, _ ->
-                viewModel.delete(reminder)
+                reminderViewModel.delete(reminder)
             }
             .setNegativeButton(getString(R.string.btn_cancel), null)
             .show()
