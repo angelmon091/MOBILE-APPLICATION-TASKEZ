@@ -83,24 +83,8 @@ class RemindersActivity : AppCompatActivity() {
     }
 
     private fun checkBatteryOptimization() {
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
-                MaterialAlertDialogBuilder(this)
-                    .setTitle("Funcionamiento en segundo plano")
-                    .setMessage("Para asegurar que los recordatorios lleguen a tiempo, por favor desactiva la optimización de batería para esta app.")
-                    .setPositiveButton("Configurar") { _, _ ->
-                        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                            data = Uri.parse("package:$packageName")
-                        }
-                        startActivity(intent)
-                    }
-                    .setNegativeButton("Omitir", null)
-                    .show()
-            } else {
-                checkExactAlarmPermission()
-            }
-        }
+        // Se elimina el mensaje de optimización de batería
+        checkExactAlarmPermission()
     }
 
     private fun checkExactAlarmPermission() {

@@ -1,8 +1,7 @@
 package com.example.proyectofinal
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,10 +16,10 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -81,11 +80,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun startReminderService() {
         val serviceIntent = Intent(this, ReminderService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent)
-        } else {
-            startService(serviceIntent)
-        }
+        startForegroundService(serviceIntent)
     }
 
     private fun setupUI() {
@@ -188,15 +183,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         chip.isChipIconVisible = false
         chip.isCheckedIconVisible = false
         
-        if (name == "Todas") {
-            chip.id = R.id.chipTodas
-            chip.isChecked = true
-        } else if (name == "Escuela") {
-            chip.id = R.id.chipEscuela
-        } else if (name == "Trabajo") {
-            chip.id = R.id.chipTrabajo
-        } else {
-            chip.id = View.generateViewId()
+        when (name) {
+            "Todas" -> {
+                chip.id = R.id.chipTodas
+                chip.isChecked = true
+            }
+            "Escuela" -> {
+                chip.id = R.id.chipEscuela
+            }
+            "Trabajo" -> {
+                chip.id = R.id.chipTrabajo
+            }
+            else -> {
+                chip.id = View.generateViewId()
+            }
         }
 
         if (!isDefault) {
@@ -239,20 +239,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun saveCategories() {
-        val sharedPref = getSharedPreferences("TaskEzzPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.putStringSet("DYNAMIC_CATEGORIES", dynamicCategories.toSet())
-        editor.apply()
+        val sharedPref = getSharedPreferences("TaskEzzPrefs", MODE_PRIVATE)
+        sharedPref.edit {
+            putStringSet("DYNAMIC_CATEGORIES", dynamicCategories.toSet())
+        }
     }
 
     private fun loadCategories() {
-        val sharedPref = getSharedPreferences("TaskEzzPrefs", Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("TaskEzzPrefs", MODE_PRIVATE)
         if (!sharedPref.contains("CATEGORIES_INITIALIZED")) {
             val initial = setOf("Escuela", "Trabajo")
-            sharedPref.edit()
-                .putStringSet("DYNAMIC_CATEGORIES", initial)
-                .putBoolean("CATEGORIES_INITIALIZED", true)
-                .apply()
+            sharedPref.edit {
+                putStringSet("DYNAMIC_CATEGORIES", initial)
+                putBoolean("CATEGORIES_INITIALIZED", true)
+            }
         }
         val saved = sharedPref.getStringSet("DYNAMIC_CATEGORIES", emptySet())
         dynamicCategories.clear()
@@ -324,6 +324,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    @SuppressLint("DiscouragedPrivateApi")
     private fun showMainMenuOptions(view: View) {
         val wrapper = ContextThemeWrapper(this, R.style.CustomPopupMenuStyle)
         val popup = PopupMenu(wrapper, view)
@@ -343,8 +344,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
             val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
             setForceIcons.invoke(menuPopupHelper, true)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (_: Exception) {
+            // Ignorar errores de reflexión
         }
 
         popup.setOnMenuItemClickListener { menuItem ->
