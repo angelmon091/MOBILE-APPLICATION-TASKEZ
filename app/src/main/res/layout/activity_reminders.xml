@@ -12,12 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background"
-        app:elevation="0dp">
+        app:elevation="0dp"
+        app:liftOnScroll="false">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/background"
             app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@color/on_surface"
             app:title="@string/menu_reminders"
@@ -53,6 +55,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="88dp"
+        android:background="@color/background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <LinearLayout
@@ -63,6 +66,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone"
+        android:background="@color/background"
         tools:visibility="visible">
 
         <ImageView

@@ -17,6 +17,10 @@
         <item name="colorOnTertiaryContainer">@color/on_tertiary_container</item>
 
         <item name="android:windowBackground">@color/background</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
 
         <!-- Barra de estado y navegación transparentes -->
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -25,7 +29,7 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
 
-        <!-- Forzar estilo de PopupMenu -->
+        <!-- Forzar estilo de PopupMenu y Diálogos -->
         <item name="popupMenuStyle">@style/CustomPopupMenuStyle</item>
         <item name="alertDialogTheme">@style/CustomAlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/CustomAlertDialogTheme</item>
@@ -33,16 +37,17 @@
 
     <style name="Theme.ProyectoFinal" parent="Base.Theme.ProyectoFinal" />
 
-    <!-- Estilo de Menú con Redondeo Real -->
+    <!-- Estilo de Menú con fondo forzado blanco -->
     <style name="CustomPopupMenuStyle" parent="Widget.Material3.PopupMenu">
         <item name="android:popupBackground">@drawable/bg_popup_menu</item>
-        <item name="android:popupElevation">8dp</item>
+        <item name="android:popupElevation">0dp</item>
     </style>
 
-    <!-- Estilo para diálogos coherente con Material3 y poco redondeo -->
+    <!-- Estilo para diálogos homogeneizado -->
     <style name="CustomAlertDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Dialog</item>
         <item name="colorPrimary">@color/primary</item>
+        <item name="colorSurface">@color/surface</item>
     </style>
 
     <style name="ShapeAppearance.Dialog" parent="ShapeAppearance.Material3.LargeComponent">
@@ -66,6 +71,14 @@
     <!-- Overlay para el Toolbar -->
     <style name="ThemeOverlay.App.Toolbar" parent="ThemeOverlay.Material3.ActionBar">
         <item name="colorControlNormal">@color/on_surface</item>
+    </style>
+
+    <style name="CalendarDateTextAppearance" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="CalendarWeekDayTextAppearance" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
     <style name="Widget.App.CalendarView" parent="android:Widget.CalendarView">

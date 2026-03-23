@@ -107,6 +107,8 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         android:background="@color/surface"
+        app:backgroundTint="@color/surface"
+        app:elevation="0dp"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu"
         app:itemShapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"

@@ -1,7 +1,9 @@
 package com.example.proyectofinal
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +12,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.proyectofinal.databinding.ActivityCalendarBinding
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
+import com.prolificinteractive.materialcalendarview.DayViewFacade
+import com.prolificinteractive.materialcalendarview.spans.DotSpan
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,9 +51,11 @@ class CalendarActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         selectedDate = sdf.format(Date())
 
-        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            val calendar = Calendar.getInstance()
-            calendar.set(year, month, dayOfMonth)
+        // Configurar fecha inicial seleccionada en el calendario
+        binding.calendarView.setSelectedDate(CalendarDay.today())
+
+        binding.calendarView.setOnDateChangedListener { _, date, _ ->
+            val calendar = date.calendar
             selectedDate = sdf.format(calendar.time)
             filterNotesByDate()
         }
@@ -70,21 +78,55 @@ class CalendarActivity : AppCompatActivity() {
     private fun observeNotes() {
         viewModel.allNotes.observe(this) { notes ->
             allNotes = notes
+            updateCalendarDecorators()
             filterNotesByDate()
         }
     }
 
-    private fun filterNotesByDate() {
-        val filtered = allNotes.filter { note ->
-            note.endDate == selectedDate || (note.endDate == null && isSameDay(note.date, selectedDate))
-        }
-        adapter.submitList(filtered)
+    private fun updateCalendarDecorators() {
+        val daysWithNotes = allNotes.mapNotNull { note ->
+            note.endDate?.let { dateStr ->
+                try {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    val date = sdf.parse(dateStr)
+                    date?.let { CalendarDay.from(it) }
+                } catch (e: Exception) {
+                    null
+                }
+            }
+        }.toSet()
+
+        binding.calendarView.removeDecorators()
+        // Usamos un color rosa/rojo para los puntos de evento
+        binding.calendarView.addDecorator(EventDecorator(Color.parseColor("#E91E63"), daysWithNotes))
     }
 
-    private fun isSameDay(noteDateStr: String, selectedDateStr: String): Boolean {
-        // La fecha de la nota viene en formato "Lunes, 22 de Mayo a las 12:30" o similar
-        // Esto es un poco frágil, lo ideal sería guardar la fecha en un formato estandarizado en la DB.
-        // Por ahora, intentaremos un match parcial o simplificado.
-        return false // Por ahora priorizamos endDate que es el campo nuevo exacto
+    private fun filterNotesByDate() {
+        val filtered = allNotes.filter { note ->
+            note.endDate == selectedDate
+        }
+        
+        adapter.submitList(filtered)
+        
+        if (filtered.isEmpty()) {
+            binding.rvDayNotes.visibility = View.GONE
+            binding.emptyStateCalendar.visibility = View.VISIBLE
+        } else {
+            binding.rvDayNotes.visibility = View.VISIBLE
+            binding.emptyStateCalendar.visibility = View.GONE
+        }
+    }
+
+    /**
+     * Decorador personalizado para añadir un punto indicador
+     */
+    class EventDecorator(private val color: Int, private val dates: Collection<CalendarDay>) : DayViewDecorator {
+        override fun shouldDecorate(day: CalendarDay): Boolean {
+            return dates.contains(day)
+        }
+
+        override fun decorate(view: DayViewFacade) {
+            view.addSpan(DotSpan(8f, color))
+        }
     }
 }

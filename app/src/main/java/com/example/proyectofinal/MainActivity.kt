@@ -25,12 +25,15 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.proyectofinal.databinding.ActivityMainBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -295,11 +298,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             when (menuItem.itemId) {
                 R.id.action_pin -> { viewModel.update(note.copy(isPinned = !note.isPinned)); true }
                 R.id.action_lock -> { viewModel.update(note.copy(isLocked = !note.isLocked)); true }
+                R.id.action_duplicate -> { duplicateTask(note); true }
                 R.id.action_delete -> { viewModel.delete(note); true }
                 else -> false
             }
         }
         popup.show()
+    }
+
+    private fun duplicateTask(note: Note) {
+        lifecycleScope.launch {
+            val duplicatedNote = note.copy(id = 0, title = "${note.title} (copia)")
+            val db = AppDatabase.getDatabase(this@MainActivity)
+            val newNoteId = db.noteDao().insert(duplicatedNote).toInt()
+            
+            // Duplicar subtareas si existen
+            val subtasks = db.subtaskDao().getSubtasksByNoteId(note.id).first()
+            subtasks.forEach { subtask ->
+                db.subtaskDao().insert(subtask.copy(id = 0, noteId = newNoteId))
+            }
+            showToast("Tarea duplicada")
+        }
     }
 
     private fun setupNavigation() {

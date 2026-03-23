@@ -59,6 +59,9 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
+    
+    // Calendar
+    implementation(libs.material.calendarview)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
