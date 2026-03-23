@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        startReminderService()
         loadCategories()
         setupUI()
         setupRecyclerView()
@@ -69,11 +68,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupFilters()
 
         observeNotesOnce()
-    }
-
-    private fun startReminderService() {
-        val serviceIntent = Intent(this, ReminderService::class.java)
-        startForegroundService(serviceIntent)
     }
 
     private fun setupUI() {

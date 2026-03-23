@@ -12,6 +12,7 @@ lifecycle = "2.8.7"
 espresso = "3.6.1"
 junit = "4.13.2"
 junitExt = "1.2.1"
+work = "2.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +31,9 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 # Lifecycle
 lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+
+# WorkManager
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
