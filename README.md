@@ -66,6 +66,3 @@ El proyecto está construido utilizando las últimas tecnologías y mejores prá
 
 ---
 Este proyecto fue desarrollado como parte de un proceso de aprendizaje en desarrollo móvil avanzado.
-<p align="center">
-  <img src="https://developer.android.com/static/images/brand/Android_Robot.png" width="100">
-</p>
