@@ -1,4 +1,4 @@
-# <img src="app/src/main/res/drawable/logoapp.png" width="40" height="40"> RapiTask - Proyecto Final de Aplicación Móvil
+# <img src="app/src/main/res/drawable/logoapp.png" width="40" height="40"> RapiTask - Aplicación Móvil
 
 RapiTask es una aplicación avanzada de gestión de notas y tareas diseñada para ofrecer una experiencia de usuario fluida y productiva, siguiendo los principios de Material Design 3.
 
