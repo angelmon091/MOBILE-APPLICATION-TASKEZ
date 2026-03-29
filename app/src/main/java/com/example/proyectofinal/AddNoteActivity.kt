@@ -107,7 +107,7 @@ class AddNoteActivity : AppCompatActivity() {
         if (isGranted) {
             openCamera()
         } else {
-            showToast("Permiso de cámara denegado")
+            showToast(getString(R.string.error_camera_permission))
         }
     }
 
@@ -115,7 +115,7 @@ class AddNoteActivity : AppCompatActivity() {
         uri?.let {
             val size = getFileSize(it)
             if (size > 10 * 1024 * 1024) {
-                showToast("El archivo es demasiado grande (máx. 10MB)")
+                showToast(getString(R.string.error_file_too_large))
                 return@let
             }
             try {

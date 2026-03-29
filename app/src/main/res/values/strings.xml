@@ -37,6 +37,9 @@
     <string name="error_audio">Error al grabar</string>
     <string name="error_playing">Error al reproducir</string>
     <string name="error_opening">Error al abrir</string>
+    <string name="error_camera_permission">Permiso de cámara denegado</string>
+    <string name="error_file_too_large">El archivo es demasiado grande (máx. 10MB)</string>
+    <string name="error_camera">No se pudo abrir la cámara</string>
 
     <!-- Empty State -->
     <string name="no_notes_yet">No hay tareas creadas aquí</string>
@@ -79,4 +82,7 @@
 
     <!-- Calendar -->
     <string name="title_calendar">Calendario</string>
+    <string name="privacy_policy_title">Política de Privacidad</string>
+    <string name="privacy_policy_description">Lee cómo protegemos tus datos y el uso del micrófono.</string>
+    <string name="error_privacy_policy">No se pudo abrir la política de privacidad</string>
 </resources>

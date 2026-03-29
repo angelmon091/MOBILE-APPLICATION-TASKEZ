@@ -18,6 +18,12 @@ import kotlinx.coroutines.launch
 class ReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED && 
+            intent.action != "android.intent.action.QUICKBOOT_POWERON" &&
+            !intent.hasExtra("REMINDER_ID")) {
+            return
+        }
+
         val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TaskEzz:ReminderWakeLock")
         wakeLock.acquire(5000)
